@@ -63,10 +63,14 @@ run_docker() {
 }
 
 run_prettier() {
-	if ! test_command_exists prettier; then
-		npm install --global "${npm_prettier}"
+	if [ -f node_modules/.bin/prettier ]; then
+		./node_modules/.bin/prettier --write .
+	else
+		if ! test_command_exists prettier; then
+			npm install --global "${npm_prettier}"
+		fi
+		prettier --write .
 	fi
-	prettier --write .
 }
 
 run_shellcheck() {
