@@ -48,7 +48,7 @@ apk_update_package_version() {
 	local package_version
 	package_version="$(
 		apk --no-cache --update search "${package}" |
-			grep -E "${package}-[0-9]" |
+			grep -E "^${package}-[0-9]" |
 			head -n 1 |
 			sed -E "s/${package}-([0-9]+\.[0-9]+)\..*/\1/"
 	)"
