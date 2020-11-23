@@ -75,7 +75,9 @@ npm_update_package_version() {
 	local package_version
 	package_version="$(npm show "${package}" version)"
 
+	# The package might have / in the name like @babel/cli, so let's use # as the sed
+	# expression separator.
 	sed -E -i'' \
-		"s/(${package}@)[0-9.]+/\\1${package_version}/" \
+		"s#(${package}@)[0-9.]+#\\1${package_version}#" \
 		"${file}"
 }
