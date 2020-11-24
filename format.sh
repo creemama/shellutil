@@ -29,18 +29,8 @@ main() {
 	if [ "${1:-}" = docker ]; then
 		shift
 		run_docker "${@+"${@}"}"
-	elif [ "${1:-}" = docker-format ]; then
-		shift
-		run_docker -c "${script_dir}/format.sh format $(array_to_string "${@+"${@}"}")"
-	elif [ "${1:-}" = docker-prettier ]; then
-		shift
-		run_docker -c "${script_dir}/format.sh prettier $(array_to_string "${@+"${@}"}")"
-	elif [ "${1:-}" = docker-shfmt ]; then
-		shift
-		run_docker -c "${script_dir}/format.sh shfmt $(array_to_string "${@+"${@}"}")"
-	elif [ "${1:-}" = docker-shellcheck ]; then
-		shift
-		run_docker -c "${script_dir}/format.sh shellcheck $(array_to_string "${@+"${@}"}")"
+	elif string_starts_with "${1:-}" docker-; then
+		run_docker_command "${@+"${@}"}"
 	elif [ "${1:-}" = format ]; then
 		shift
 		format "${@+"${@}"}"
@@ -71,6 +61,14 @@ run_docker() {
 		--workdir "$(pwd -P)" \
 		"${node_image}" \
 		sh "${@+"${@}"}"
+}
+
+run_docker_command() {
+	# shellcheck disable=SC2039
+	local command
+	command="$(printf %s "${1:-}" | sed -E 's/^docker-//')"
+	shift
+	run_docker -c "${script_dir}/format.sh ${command} $(array_to_string "${@+"${@}"}")"
 }
 
 run_prettier() {

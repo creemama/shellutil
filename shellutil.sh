@@ -50,6 +50,10 @@ run_tput() {
 	fi
 }
 
+string_starts_with() {
+	printf %s "${1:-}" | grep -q "^${2:-}"
+}
+
 tbold() {
 	run_tput bold
 }
