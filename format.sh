@@ -47,6 +47,9 @@ main() {
 	elif [ "${1:-}" = prettier ]; then
 		shift
 		run_prettier "${@+"${@}"}"
+	elif [ "${1:-}" = shell-format ]; then
+		shift
+		shell_format "${@+"${@}"}"
 	elif [ "${1:-}" = shfmt ]; then
 		shift
 		run_shfmt "${@+"${@}"}"
@@ -140,6 +143,11 @@ run_shfmt() {
 	fi
 	# shellcheck disable=SC2086
 	shfmt -w ${files}
+}
+
+shell_format() {
+	run_shfmt "${@+"${@}"}"
+	run_shellcheck "${@+"${@}"}"
 }
 
 main "$@"
