@@ -20,30 +20,39 @@ apk_guarantee_edgecommunity() {
 }
 
 format() {
-	run_shfmt
-	run_prettier
-	run_shellcheck
+	run_shfmt "${@+"${@}"}"
+	run_prettier "${@+"${@}"}"
+	run_shellcheck "${@+"${@}"}"
 }
 
 main() {
 	if [ "${1:-}" = docker ]; then
-		run_docker -c sh
+		shift
+		run_docker "${@+"${@}"}"
 	elif [ "${1:-}" = docker-format ]; then
-		run_docker -c "${script_dir}/format.sh format"
+		shift
+		run_docker -c "${script_dir}/format.sh format $(array_to_string "${@+"${@}"}")"
 	elif [ "${1:-}" = docker-prettier ]; then
-		run_docker -c "${script_dir}/format.sh prettier"
+		shift
+		run_docker -c "${script_dir}/format.sh prettier $(array_to_string "${@+"${@}"}")"
 	elif [ "${1:-}" = docker-shfmt ]; then
-		run_docker -c "${script_dir}/format.sh shfmt"
+		shift
+		run_docker -c "${script_dir}/format.sh shfmt $(array_to_string "${@+"${@}"}")"
 	elif [ "${1:-}" = docker-shellcheck ]; then
-		run_docker -c "${script_dir}/format.sh shellcheck"
+		shift
+		run_docker -c "${script_dir}/format.sh shellcheck $(array_to_string "${@+"${@}"}")"
 	elif [ "${1:-}" = format ]; then
-		format
+		shift
+		format "${@+"${@}"}"
 	elif [ "${1:-}" = prettier ]; then
-		run_prettier
+		shift
+		run_prettier "${@+"${@}"}"
 	elif [ "${1:-}" = shfmt ]; then
-		run_shfmt
+		shift
+		run_shfmt "${@+"${@}"}"
 	elif [ "${1:-}" = shellcheck ]; then
-		run_shellcheck
+		shift
+		run_shellcheck "${@+"${@}"}"
 	elif [ -n "${1:-}" ]; then
 		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
 		exit 1
@@ -54,38 +63,83 @@ main() {
 }
 
 run_docker() {
-	# shellcheck disable=SC2068
 	docker run -it --rm \
 		--volume "$(pwd -P):$(pwd -P)" \
 		--workdir "$(pwd -P)" \
 		"${node_image}" \
-		sh ${@}
+		sh "${@+"${@}"}"
 }
 
 run_prettier() {
 	if [ -f node_modules/.bin/prettier ]; then
-		./node_modules/.bin/prettier --write .
+		# shellcheck disable=SC2068
+		./node_modules/.bin/prettier --write ${@:-.}
 	else
 		if ! test_command_exists prettier; then
 			npm install --global "${npm_prettier}"
 		fi
-		prettier --write .
+		# shellcheck disable=SC2068
+		prettier --write ${@:-.}
 	fi
 }
 
 run_shellcheck() {
+	if [ -n "${2:-}" ]; then
+		for arg in "$@"; do
+			run_shellcheck "${arg}"
+		done
+		return
+	fi
+	# shellcheck disable=SC2039
+	local files
+	if [ -n "${1:-}" ]; then
+		if [ -d "${1}" ]; then
+			(
+				cd "${1}"
+				run_shellcheck
+			)
+			return
+		else
+			files="${1}"
+		fi
+	else
+		files='./*.sh'
+	fi
 	if ! test_command_exists shellcheck; then
 		apk add "${apk_shellcheck}"
 	fi
-	shellcheck --external-sources ./*.sh
+	# shellcheck disable=SC2086
+	shellcheck --external-sources ${files}
 }
 
 run_shfmt() {
+	if [ -n "${2:-}" ]; then
+		for arg in "$@"; do
+			run_shfmt "${arg}"
+		done
+		return
+	fi
+	# shellcheck disable=SC2039
+	local files
+	if [ -n "${1:-}" ]; then
+		if [ -d "${1}" ]; then
+			(
+				cd "${1}"
+				run_shfmt
+			)
+			return
+		else
+			files="${1}"
+		fi
+	else
+		files='./*.sh'
+	fi
 	if ! test_command_exists shfmt; then
 		apk_guarantee_edgecommunity
 		apk add "${apk_shfmt}"
 	fi
-	shfmt -w ./*.sh
+	# shellcheck disable=SC2086
+	shfmt -w ${files}
 }
 
 main "$@"

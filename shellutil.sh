@@ -8,6 +8,17 @@ if [ -n "${BASH_VERSION:-}" ]; then
 fi
 # set -o xtrace
 
+array_to_string() {
+	if [ -n "${1:-}" ]; then
+		# shellcheck disable=SC2039
+		local command=''
+		for arg in "${@}"; do
+			command="$(printf %s "${command}") '${arg}'"
+		done
+		printf %s "${command}"
+	fi
+}
+
 # https://unix.stackexchange.com/a/598047
 is_integer() {
 	case "${1#[+-]}" in
