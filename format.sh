@@ -26,31 +26,31 @@ format() {
 }
 
 main() {
-	if [ "${1:-}" = docker ]; then
+	if [ -z "${1:-}" ]; then
+		printf '%sEnter a command.\n%s' "$(tred)" "$(treset)"
+		exit 1
+	elif [ "${1}" = docker ]; then
 		shift
 		run_docker ${@+"${@}"}
-	elif string_starts_with "${1:-}" docker-; then
+	elif string_starts_with "${1}" docker-; then
 		run_docker_command ${@+"${@}"}
-	elif [ "${1:-}" = format ]; then
+	elif [ "${1}" = format ]; then
 		shift
 		format ${@+"${@}"}
-	elif [ "${1:-}" = prettier ]; then
+	elif [ "${1}" = prettier ]; then
 		shift
 		run_prettier ${@+"${@}"}
-	elif [ "${1:-}" = shell-format ]; then
+	elif [ "${1}" = shell-format ]; then
 		shift
 		shell_format ${@+"${@}"}
-	elif [ "${1:-}" = shfmt ]; then
+	elif [ "${1}" = shfmt ]; then
 		shift
 		run_shfmt ${@+"${@}"}
-	elif [ "${1:-}" = shellcheck ]; then
+	elif [ "${1}" = shellcheck ]; then
 		shift
 		run_shellcheck ${@+"${@}"}
-	elif [ -n "${1:-}" ]; then
-		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
-		exit 1
 	else
-		printf '%sEnter a command.\n%s' "$(tred)" "$(treset)"
+		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
 		exit 1
 	fi
 }

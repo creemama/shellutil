@@ -12,21 +12,21 @@ cd "${script_dir}"
 # set -o xtrace
 
 main() {
-	if [ "${1:-}" = docker ]; then
-		./format.sh docker
-	elif [ "${1:-}" = docker-format ]; then
-		./format.sh docker-format
-	elif [ "${1:-}" = docker-update ]; then
-		run_docker_update
-	elif [ "${1:-}" = format ]; then
-		./format.sh format
-	elif [ "${1:-}" = update ]; then
-		update
-	elif [ -n "${1:-}" ]; then
-		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
-		exit 1
-	else
+	if [ -z "${1:-}" ]; then
 		printf '%sEnter a command.\n%s' "$(tred)" "$(treset)"
+		exit 1
+	elif [ "${1}" = docker ]; then
+		./format.sh docker
+	elif [ "${1}" = docker-format ]; then
+		./format.sh docker-format
+	elif [ "${1}" = docker-update ]; then
+		run_docker_update
+	elif [ "${1}" = format ]; then
+		./format.sh format
+	elif [ "${1}" = update ]; then
+		update
+	else
+		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
 		exit 1
 	fi
 }
