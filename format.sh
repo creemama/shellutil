@@ -20,32 +20,32 @@ apk_guarantee_edgecommunity() {
 }
 
 format() {
-	run_shfmt "${@+"${@}"}"
-	run_prettier "${@+"${@}"}"
-	run_shellcheck "${@+"${@}"}"
+	run_shfmt ${@+"${@}"}
+	run_prettier ${@+"${@}"}
+	run_shellcheck ${@+"${@}"}
 }
 
 main() {
 	if [ "${1:-}" = docker ]; then
 		shift
-		run_docker "${@+"${@}"}"
+		run_docker ${@+"${@}"}
 	elif string_starts_with "${1:-}" docker-; then
-		run_docker_command "${@+"${@}"}"
+		run_docker_command ${@+"${@}"}
 	elif [ "${1:-}" = format ]; then
 		shift
-		format "${@+"${@}"}"
+		format ${@+"${@}"}
 	elif [ "${1:-}" = prettier ]; then
 		shift
-		run_prettier "${@+"${@}"}"
+		run_prettier ${@+"${@}"}
 	elif [ "${1:-}" = shell-format ]; then
 		shift
-		shell_format "${@+"${@}"}"
+		shell_format ${@+"${@}"}
 	elif [ "${1:-}" = shfmt ]; then
 		shift
-		run_shfmt "${@+"${@}"}"
+		run_shfmt ${@+"${@}"}
 	elif [ "${1:-}" = shellcheck ]; then
 		shift
-		run_shellcheck "${@+"${@}"}"
+		run_shellcheck ${@+"${@}"}
 	elif [ -n "${1:-}" ]; then
 		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
 		exit 1
@@ -60,7 +60,7 @@ run_docker() {
 		--volume "$(pwd -P):$(pwd -P)" \
 		--workdir "$(pwd -P)" \
 		"${node_image}" \
-		sh "${@+"${@}"}"
+		sh ${@+"${@}"}
 }
 
 run_docker_command() {
@@ -68,7 +68,7 @@ run_docker_command() {
 	local command
 	command="$(printf %s "${1:-}" | sed -E 's/^docker-//')"
 	shift
-	run_docker -c "${script_dir}/format.sh ${command} $(array_to_string "${@+"${@}"}")"
+	run_docker -c "${script_dir}/format.sh ${command} $(array_to_string ${@+"${@}"})"
 }
 
 run_prettier() {
@@ -144,8 +144,8 @@ run_shfmt() {
 }
 
 shell_format() {
-	run_shfmt "${@+"${@}"}"
-	run_shellcheck "${@+"${@}"}"
+	run_shfmt ${@+"${@}"}
+	run_shellcheck ${@+"${@}"}
 }
 
 main "$@"
