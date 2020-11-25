@@ -1,11 +1,11 @@
 #!/bin/sh
 
 script_dir="$(
-	cd "$(dirname "${0}")"
+	cd "$(dirname "$0")"
 	pwd -P
 )"
 # shellcheck source=shellutil.sh
-. "${script_dir}/shellutil.sh"
+. "$script_dir"/shellutil.sh
 # set -o xtrace
 
 apk_shellcheck=shellcheck~=0.7
@@ -20,37 +20,37 @@ apk_guarantee_edgecommunity() {
 }
 
 format() {
-	run_shfmt ${@+"${@}"}
-	run_prettier ${@+"${@}"}
-	run_shellcheck ${@+"${@}"}
+	run_shfmt "$@"
+	run_prettier "$@"
+	run_shellcheck "$@"
 }
 
 main() {
 	if [ -z "${1:-}" ]; then
 		printf '%sEnter a command.\n%s' "$(tred)" "$(treset)"
 		exit 1
-	elif [ "${1}" = docker ]; then
+	elif [ "$1" = docker ]; then
 		shift
-		run_docker ${@+"${@}"}
-	elif string_starts_with "${1}" docker-; then
-		run_docker_command ${@+"${@}"}
-	elif [ "${1}" = format ]; then
+		run_docker "$@"
+	elif string_starts_with "$1" docker-; then
+		run_docker_command "$@"
+	elif [ "$1" = format ]; then
 		shift
-		format ${@+"${@}"}
-	elif [ "${1}" = prettier ]; then
+		format "$@"
+	elif [ "$1" = prettier ]; then
 		shift
-		run_prettier ${@+"${@}"}
-	elif [ "${1}" = shell-format ]; then
+		run_prettier "$@"
+	elif [ "$1" = shell-format ]; then
 		shift
-		shell_format ${@+"${@}"}
-	elif [ "${1}" = shfmt ]; then
+		shell_format "$@"
+	elif [ "$1" = shfmt ]; then
 		shift
-		run_shfmt ${@+"${@}"}
-	elif [ "${1}" = shellcheck ]; then
+		run_shfmt "$@"
+	elif [ "$1" = shellcheck ]; then
 		shift
-		run_shellcheck ${@+"${@}"}
+		run_shellcheck "$@"
 	else
-		printf '%s%s is not a recognized command.\n%s' "$(tred)" "${1}" "$(treset)"
+		printf '%s%s is not a recognized command.\n%s' "$(tred)" "$1" "$(treset)"
 		exit 1
 	fi
 }
@@ -59,8 +59,8 @@ run_docker() {
 	docker run -it --rm \
 		--volume "$(pwd -P):$(pwd -P)" \
 		--workdir "$(pwd -P)" \
-		"${node_image}" \
-		sh ${@+"${@}"}
+		"$node_image" \
+		sh "$@"
 }
 
 run_docker_command() {
@@ -68,84 +68,82 @@ run_docker_command() {
 	local command
 	command="$(printf %s "${1:-}" | sed -E 's/^docker-//')"
 	shift
-	run_docker -c "${script_dir}/format.sh ${command} $(array_to_string ${@+"${@}"})"
+	run_docker -c "$script_dir/format.sh $command $(array_to_string "$@")"
 }
 
 run_prettier() {
 	if [ -f node_modules/.bin/prettier ]; then
-		# shellcheck disable=SC2068
-		./node_modules/.bin/prettier --write ${@:-.}
+		./node_modules/.bin/prettier --write "${@:-.}"
 	else
 		if ! test_command_exists prettier; then
-			npm install --global "${npm_prettier}"
+			npm install --global "$npm_prettier"
 		fi
-		# shellcheck disable=SC2068
-		prettier --write ${@:-.}
+		prettier --write "${@:-.}"
 	fi
 }
 
 run_shellcheck() {
 	if [ -n "${2:-}" ]; then
 		for arg in "$@"; do
-			run_shellcheck "${arg}"
+			run_shellcheck "$arg"
 		done
 		return
 	fi
 	# shellcheck disable=SC2039
 	local files
 	if [ -n "${1:-}" ]; then
-		if [ -d "${1}" ]; then
+		if [ -d "$1" ]; then
 			(
-				cd "${1}"
+				cd "$1"
 				run_shellcheck
 			)
 			return
 		else
-			files="${1}"
+			files="$1"
 		fi
 	else
 		files='./*.sh'
 	fi
 	if ! test_command_exists shellcheck; then
-		apk add "${apk_shellcheck}"
+		apk add "$apk_shellcheck"
 	fi
 	# shellcheck disable=SC2086
-	shellcheck --external-sources ${files}
+	shellcheck --external-sources $files
 }
 
 run_shfmt() {
 	if [ -n "${2:-}" ]; then
 		for arg in "$@"; do
-			run_shfmt "${arg}"
+			run_shfmt "$arg"
 		done
 		return
 	fi
 	# shellcheck disable=SC2039
 	local files
 	if [ -n "${1:-}" ]; then
-		if [ -d "${1}" ]; then
+		if [ -d "$1" ]; then
 			(
-				cd "${1}"
+				cd "$1"
 				run_shfmt
 			)
 			return
 		else
-			files="${1}"
+			files="$1"
 		fi
 	else
 		files='./*.sh'
 	fi
 	if ! test_command_exists shfmt; then
 		apk_guarantee_edgecommunity
-		apk add "${apk_shfmt}"
+		apk add "$apk_shfmt"
 	fi
 	# shellcheck disable=SC2086
-	shfmt -w ${files}
+	shfmt -w $files
 }
 
 shell_format() {
-	run_shfmt ${@+"${@}"}
-	run_shellcheck ${@+"${@}"}
+	run_shfmt "$@"
+	run_shellcheck "$@"
 }
 
 main "$@"

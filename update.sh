@@ -29,8 +29,8 @@ apk_update_node_image_version() {
 
 	# shellcheck disable=SC2059
 	sed -E -i'' \
-		"$(printf "${sed_pattern}" "${major_node_version}" "${alpine_version}")" \
-		"${file}"
+		"$(printf "$sed_pattern" "$major_node_version" "$alpine_version")" \
+		"$file"
 }
 
 apk_update_package_version() {
@@ -38,7 +38,7 @@ apk_update_package_version() {
 
 	# shellcheck disable=SC2039
 	local package
-	package="${1}"
+	package="$1"
 
 	# shellcheck disable=SC2039
 	local file
@@ -47,15 +47,15 @@ apk_update_package_version() {
 	# shellcheck disable=SC2039
 	local package_version
 	package_version="$(
-		apk --no-cache --update search "${package}" |
-			grep -E "^${package}-[0-9]" |
+		apk --no-cache --update search "$package" |
+			grep -E "^$package-[0-9]" |
 			head -n 1 |
-			sed -E "s/${package}-([0-9]+\.[0-9]+).*/\1/"
+			sed -E "s/$package-([0-9]+\.[0-9]+).*/\1/"
 	)"
 
 	sed -E -i'' \
-		"s/${package}(@edgecommunity)?~=[0-9.]+/${package}\\1~=${package_version}/" \
-		"${file}"
+		"s/$package(@edgecommunity)?~=[0-9.]+/$package\\1~=$package_version/" \
+		"$file"
 }
 
 get_major_node_version() {
@@ -65,7 +65,7 @@ get_major_node_version() {
 npm_update_package_version() {
 	# shellcheck disable=SC2039
 	local package
-	package="${1}"
+	package="$1"
 
 	# shellcheck disable=SC2039
 	local file
@@ -73,11 +73,11 @@ npm_update_package_version() {
 
 	# shellcheck disable=SC2039
 	local package_version
-	package_version="$(npm show "${package}" version)"
+	package_version="$(npm show "$package" version)"
 
 	# The package might have / in the name like @babel/cli, so let's use # as the sed
 	# expression separator.
 	sed -E -i'' \
-		"s#(${package}@)[0-9.]+#\\1${package_version}#" \
-		"${file}"
+		"s#($package@)[0-9.]+#\\1$package_version#" \
+		"$file"
 }

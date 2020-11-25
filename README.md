@@ -17,10 +17,10 @@ Use the [dot operator](https://ss64.com/bash/source.html) to include
 #!/bin/sh
 
 script_dir="$(
-	cd "$(dirname "${0}")"
+	cd "$(dirname "$0")"
 	pwd -P
 )"
-cd "${script_dir}"
+cd "$script_dir"
 if [ ! -f shellutil/shellutil.sh ]; then
 	git submodule update --init
 fi

@@ -11,11 +11,11 @@ fi
 array_to_string() {
 	if [ -n "${1:-}" ]; then
 		# shellcheck disable=SC2039
-		local command=''
-		for arg in "${@}"; do
-			command="$(printf %s "${command}") '${arg}'"
+		local command
+		for arg in "$@"; do
+			command="$(printf %s "${command:-}") '$arg'"
 		done
-		printf %s "${command}"
+		printf %s "$command"
 	fi
 }
 
@@ -44,9 +44,7 @@ run_tput() {
 		apk add ncurses >/dev/null 2>&1 || true
 	fi
 	if test_command_exists tput; then
-		# $@ is unquoted.
-		# shellcheck disable=SC2068
-		tput $@
+		tput "$@"
 	fi
 }
 
@@ -83,5 +81,5 @@ tyellow() {
 }
 
 test_command_exists() {
-	command -v "${1}" >/dev/null 2>&1
+	command -v "$1" >/dev/null 2>&1
 }
