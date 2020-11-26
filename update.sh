@@ -46,11 +46,16 @@ apk_update_package_version() {
 
 	# shellcheck disable=SC2039
 	local package_version
+	# "s/$package-([0-9]+)[a-z]?-.*/\1/" matches the following:
+	# less-530-r0
+	# tzdata-2019a-r0
+	apk --no-cache --update search "$package"
 	package_version="$(
 		apk --no-cache --update search "$package" |
 			grep -E "^$package-[0-9]" |
 			head -n 1 |
-			sed -E "s/$package-([0-9]+\.[0-9]+).*/\1/"
+			sed -E "s/$package-([0-9]+\.[0-9]+).*/\1/" |
+			sed -E "s/$package-([0-9]+)[a-z]?-.*/\1/"
 	)"
 
 	sed -E -i'' \
