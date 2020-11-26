@@ -8,6 +8,10 @@ if [ -n "${BASH_VERSION:-}" ]; then
 fi
 # set -o xtrace
 
+arg() {
+	print_arg_n "$@"
+}
+
 array_to_string() {
 	if [ -n "${1:-}" ]; then
 		# shellcheck disable=SC2039
@@ -32,6 +36,23 @@ is_tty() {
 	# "No value for $TERM and no -T specified"
 	# https://askubuntu.com/questions/591937/no-value-for-term-and-no-t-specified
 	tty -s >/dev/null 2>&1
+}
+
+print_arg_n() {
+	# shellcheck disable=SC2039
+	local n
+	n="$1"
+	# shellcheck disable=SC2039
+	local i
+	i=0
+	shift
+	for arg in "$@"; do
+		if [ "$n" = "$i" ]; then
+			printf '%s\n' "$arg"
+			return
+		fi
+		i=$((i + 1))
+	done
 }
 
 run_tput() {

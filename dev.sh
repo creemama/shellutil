@@ -23,6 +23,12 @@ main() {
 		run_docker_update
 	elif [ "$1" = format ]; then
 		./format.sh format
+	elif [ "$1" = git ]; then
+		shift
+		./git.sh git "$@"
+	elif [ "$1" = gitk ]; then
+		shift
+		./git.sh gitk "$@"
 	elif [ "$1" = update ]; then
 		update
 	else
@@ -45,6 +51,13 @@ update() {
 	apk_update_package_version shellcheck format.sh
 	apk_update_package_version shfmt format.sh
 	npm_update_package_version prettier format.sh
+
+	apk_update_node_image_version git.sh
+	apk_update_package_version git git.sh
+	apk_update_package_version git-gitk git.sh
+	apk_update_package_version gnupg git.sh
+	apk_update_package_version openssh git.sh
+	apk_update_package_version terminus-font git.sh
 }
 
 main "$@"
