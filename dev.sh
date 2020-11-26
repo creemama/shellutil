@@ -7,8 +7,8 @@ script_dir="$(
 cd "$script_dir"
 # shellcheck source=shellutil.sh
 . shellutil.sh
-# shellcheck source=update.sh
-. update.sh
+# shellcheck source=updateutil.sh
+. updateutil.sh
 # set -o xtrace
 
 main() {
