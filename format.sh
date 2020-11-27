@@ -4,6 +4,8 @@ script_dir="$(
 	cd "$(dirname "$0")"
 	pwd -P
 )"
+# shellcheck source=mainutil.sh
+. "$script_dir"/mainutil.sh
 # shellcheck source=shellutil.sh
 . "$script_dir"/shellutil.sh
 # set -o xtrace
@@ -26,32 +28,42 @@ format() {
 }
 
 main() {
+	# shellcheck disable=SC2039
+	local command_help
+	command_help='docker - Develop inside a Docker container.
+format - (or docker-format) Run shfmt, prettier, and shellcheck.
+prettier - (or docker-prettier) Run prettier.
+shell-format - (or docker-shell-format) Run shfmt and shellcheck.
+shfmt - (or docker-shellcheck) Run shfmt.
+shellcheck - (or docker-shellcheck) Run shellcheck.'
+	# shellcheck disable=SC2039
+	local commands
+	commands="$(main_extract_commands "$command_help")"
+	# shellcheck disable=SC2086
 	if [ -z "${1:-}" ]; then
-		printf '%sEnter a command.\n%s' "$(tred)" "$(treset)"
-		exit 1
-	elif [ "$1" = docker ]; then
+		main_exit_with_no_command_error "$command_help"
+	elif [ "$1" = "$(arg 0 $commands)" ]; then
 		shift
 		run_docker "$@"
 	elif string_starts_with "$1" docker-; then
 		run_docker_command "$@"
-	elif [ "$1" = format ]; then
+	elif [ "$1" = "$(arg 1 $commands)" ]; then
 		shift
 		format "$@"
-	elif [ "$1" = prettier ]; then
+	elif [ "$1" = "$(arg 2 $commands)" ]; then
 		shift
 		run_prettier "$@"
-	elif [ "$1" = shell-format ]; then
+	elif [ "$1" = "$(arg 3 $commands)" ]; then
 		shift
 		shell_format "$@"
-	elif [ "$1" = shfmt ]; then
+	elif [ "$1" = "$(arg 4 $commands)" ]; then
 		shift
 		run_shfmt "$@"
-	elif [ "$1" = shellcheck ]; then
+	elif [ "$1" = "$(arg 5 $commands)" ]; then
 		shift
 		run_shellcheck "$@"
 	else
-		printf '%s%s is not a recognized command.\n%s' "$(tred)" "$1" "$(treset)"
-		exit 1
+		main_exit_with_invalid_command_error "$1" "$command_help"
 	fi
 }
 

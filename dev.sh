@@ -5,6 +5,8 @@ script_dir="$(
 	pwd -P
 )"
 cd "$script_dir"
+# shellcheck source=mainutil.sh
+. mainutil.sh
 # shellcheck source=shellutil.sh
 . shellutil.sh
 # shellcheck source=updateutil.sh
@@ -12,28 +14,39 @@ cd "$script_dir"
 # set -o xtrace
 
 main() {
+	# shellcheck disable=SC2039
+	local command_help
+	command_help='docker - Develop inside a Docker container.
+docker-format - Run format using a Docker container.
+docker-update - Run update using a Docker container.
+format - Run shfmt, prettier, and shellcheck.
+git - Run git.
+gitk - Run gitk.
+update - Check and update project dependencies.'
+	# shellcheck disable=SC2039
+	local commands
+	commands="$(main_extract_commands "$command_help")"
+	# shellcheck disable=SC2086
 	if [ -z "${1:-}" ]; then
-		printf '%sEnter a command.\n%s' "$(tred)" "$(treset)"
-		exit 1
-	elif [ "$1" = docker ]; then
+		main_exit_with_no_command_error "$command_help"
+	elif [ "$1" = "$(arg 0 $commands)" ]; then
 		./format.sh docker
-	elif [ "$1" = docker-format ]; then
+	elif [ "$1" = "$(arg 1 $commands)" ]; then
 		./format.sh docker-format
-	elif [ "$1" = docker-update ]; then
+	elif [ "$1" = "$(arg 2 $commands)" ]; then
 		run_docker_update
-	elif [ "$1" = format ]; then
+	elif [ "$1" = "$(arg 3 $commands)" ]; then
 		./format.sh format
-	elif [ "$1" = git ]; then
+	elif [ "$1" = "$(arg 4 $commands)" ]; then
 		shift
 		./git.sh git "$@"
-	elif [ "$1" = gitk ]; then
+	elif [ "$1" = "$(arg 5 $commands)" ]; then
 		shift
 		./git.sh gitk "$@"
-	elif [ "$1" = update ]; then
+	elif [ "$1" = "$(arg 6 $commands)" ]; then
 		update
 	else
-		printf '%s%s is not a recognized command.\n%s' "$(tred)" "$1" "$(treset)"
-		exit 1
+		main_exit_with_invalid_command_error "$1" "$command_help"
 	fi
 }
 
