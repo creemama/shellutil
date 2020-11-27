@@ -104,3 +104,34 @@ npm_update_package_version() {
 		"s#($package@)[0-9.]+#\\1$package_version#" \
 		"$file"
 }
+
+pip_update_package_version() {
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+
+	# shellcheck disable=SC2039
+	local file
+	file="${2:-dev.sh}"
+
+	# shellcheck disable=SC2039
+	local package_version
+	# https://www.python.org/dev/peps/pep-0440/
+	package_version="$(pip3 install "$package"==random 2>&1 |
+		grep -E "\(from versions: " |
+		sed -E 's/.*\(from versions: (.*)\)/\1/' |
+		sed -E 's/\S+(a|b|rc|post|dev)\S+//g' |
+		tr -d , |
+		sed -E 's/.+\s(\S+)\s*/\1/')"
+
+	printf '\n%s%sChecking %s %s...%s\n' \
+		"$(tbold)" \
+		"$(tcyan)" \
+		"$package" \
+		"$package_version" \
+		"$(treset)"
+
+	sed -E -i'' \
+		"s/$package==[0-9.]+/$package==$package_version/" \
+		"$file"
+}
