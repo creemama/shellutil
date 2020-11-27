@@ -70,7 +70,6 @@ run_docker_update() {
 update() {
 	apk_update_node_image_version format.sh
 	apk_update_package_version shellcheck format.sh
-	apk_update_package_version shfmt format.sh
 	npm_update_package_version prettier format.sh
 
 	apk_update_node_image_version git.sh
@@ -79,6 +78,11 @@ update() {
 	apk_update_package_version gnupg git.sh
 	apk_update_package_version openssh git.sh
 	apk_update_package_version terminus-font git.sh
+
+	# edgecommunity might have versions of packages we do not want, so let us add
+	# packages only available there last.
+	apk_guarantee_edgecommunity
+	apk_update_package_version shfmt format.sh
 }
 
 main "$@"

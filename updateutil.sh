@@ -34,8 +34,6 @@ apk_update_node_image_version() {
 }
 
 apk_update_package_version() {
-	apk_guarantee_edgecommunity
-
 	# shellcheck disable=SC2039
 	local package
 	package="$1"
