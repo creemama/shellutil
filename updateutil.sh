@@ -49,14 +49,27 @@ apk_update_package_version() {
 	# "s/$package-([0-9]+)[a-z]?-.*/\1/" matches the following:
 	# less-530-r0
 	# tzdata-2019a-r0
-	apk --no-cache --update search "$package"
+	# shellcheck disable=SC2039
+	local packages
+	packages="$(apk --no-cache --update search "$package")"
 	package_version="$(
-		apk --no-cache --update search "$package" |
+		printf %s "$packages" |
 			grep -E "^$package-[0-9]" |
 			head -n 1 |
 			sed -E "s/$package-([0-9]+\.[0-9]+).*/\1/" |
 			sed -E "s/$package-([0-9]+)[a-z]?-.*/\1/"
 	)"
+
+	printf '\n%s%sChecking %s...%s\n%s\n%s%s...%s%s\n' \
+		"$(tbold)" \
+		"$(tcyan)" \
+		"$package" \
+		"$(treset)" \
+		"$packages" \
+		"$(tbold)" \
+		"$(tcyan)" \
+		"$package_version" \
+		"$(treset)"
 
 	sed -E -i'' \
 		"s/$package(@edgecommunity)?~=[0-9.]+/$package\\1~=$package_version/" \
@@ -79,6 +92,13 @@ npm_update_package_version() {
 	# shellcheck disable=SC2039
 	local package_version
 	package_version="$(npm show "$package" version)"
+
+	printf '\n%s%sChecking %s@%s...%s\n' \
+		"$(tbold)" \
+		"$(tcyan)" \
+		"$package" \
+		"$package_version" \
+		"$(treset)"
 
 	# The package might have / in the name like @babel/cli, so let's use # as the sed
 	# expression separator.
