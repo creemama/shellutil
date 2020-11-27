@@ -16,7 +16,9 @@ cd "$script_dir"
 main() {
 	# shellcheck disable=SC2039
 	local command_help
-	command_help='docker - Develop inside a Docker container.
+	command_help='all - Run format and update.
+docker - Develop inside a Docker container.
+docker-all - Run the all command using a Docker container.
 docker-format - Run format using a Docker container.
 docker-update - Run update using a Docker container.
 format - Run shfmt, prettier, and shellcheck.
@@ -30,20 +32,26 @@ update - Check and update project dependencies.'
 	if [ -z "${1:-}" ]; then
 		main_exit_with_no_command_error "$command_help"
 	elif [ "$1" = "$(arg 0 $commands)" ]; then
-		./format.sh docker
-	elif [ "$1" = "$(arg 1 $commands)" ]; then
-		./format.sh docker-format
-	elif [ "$1" = "$(arg 2 $commands)" ]; then
-		run_docker_update
-	elif [ "$1" = "$(arg 3 $commands)" ]; then
 		./format.sh format
+		update
+	elif [ "$1" = "$(arg 1 $commands)" ]; then
+		shift
+		./format.sh docker "$@"
+	elif [ "$1" = "$(arg 2 $commands)" ]; then
+		./format.sh docker -c "./dev.sh all"
+	elif [ "$1" = "$(arg 3 $commands)" ]; then
+		./format.sh docker-format
 	elif [ "$1" = "$(arg 4 $commands)" ]; then
+		run_docker_update
+	elif [ "$1" = "$(arg 5 $commands)" ]; then
+		./format.sh format
+	elif [ "$1" = "$(arg 6 $commands)" ]; then
 		shift
 		./git.sh git "$@"
-	elif [ "$1" = "$(arg 5 $commands)" ]; then
+	elif [ "$1" = "$(arg 7 $commands)" ]; then
 		shift
 		./git.sh gitk "$@"
-	elif [ "$1" = "$(arg 6 $commands)" ]; then
+	elif [ "$1" = "$(arg 8 $commands)" ]; then
 		update
 	else
 		main_exit_with_invalid_command_error "$1" "$command_help"
