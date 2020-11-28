@@ -83,6 +83,10 @@ update() {
 	# packages only available there last.
 	apk_guarantee_edgecommunity
 	apk_update_package_version shfmt format.sh
+
+	# As a submodule, git status might not work in a Docker container mounted to this
+	# script_dir.
+	printf '%s%s\nRun git status.\n%s' "$(tbold)" "$(tyellow)" "$(treset)"
 }
 
 main "$@"

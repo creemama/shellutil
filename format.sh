@@ -13,7 +13,7 @@ script_dir="$(
 apk_shellcheck=shellcheck~=0.7
 apk_shfmt=shfmt@edgecommunity~=3.2
 node_image=creemama/node-no-yarn:14.15.1-alpine3.11
-npm_prettier=prettier@2.2.0
+npm_prettier=prettier@2.2.1
 
 apk_guarantee_edgecommunity() {
 	if [ -f /etc/apk/repositories ] && ! grep '@edgecommunity http://nl.alpinelinux.org/alpine/edge/community' /etc/apk/repositories >/dev/null 2>&1; then
