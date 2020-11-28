@@ -106,6 +106,11 @@ npm_update_package_version() {
 }
 
 pip_update_package_version() {
+	if ! test_command_exists pip3; then
+		printf '%s%spip3 does not exist.\n%s' "$(tbold)" "$(tred)" "$(treset)"
+		exit 1
+	fi
+
 	# shellcheck disable=SC2039
 	local package
 	package="$1"
