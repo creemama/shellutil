@@ -80,7 +80,7 @@ run_docker_command() {
 	local command
 	command="$(printf %s "${1:-}" | sed -E 's/^docker-//')"
 	shift
-	run_docker -c "$script_dir/format.sh $command $(array_to_string "$@")"
+	run_docker -c "$script_dir/format.sh $command $*"
 }
 
 run_prettier() {
