@@ -54,9 +54,9 @@ run_docker() {
 	# https://forums.docker.com/t/how-to-run-gui-apps-in-containiers-in-osx-docker-for-mac/17797/6
 	export IP
 	IP="$(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')"
-	xhost + "${IP}"
+	xhost + "$IP"
 	docker run \
-		--env DISPLAY="${IP}":0 \
+		--env DISPLAY="$IP":0 \
 		-it \
 		--rm \
 		--volume /tmp/.X11-unix:/tmp/.X11-unix \
