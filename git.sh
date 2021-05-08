@@ -15,7 +15,7 @@ apk_git_gitk=git-gitk~=2.24
 apk_gnupg=gnupg~=2.2
 apk_openssh=openssh~=8.1
 apk_terminus_font=terminus-font~=4.48
-node_image=creemama/node-no-yarn:14.15.1-alpine3.11
+node_image=creemama/node-no-yarn:14.16.1-alpine3.11
 
 main() {
 	# shellcheck disable=SC2039
