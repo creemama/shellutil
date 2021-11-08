@@ -10,12 +10,12 @@ script_dir="$(
 . "$script_dir"/shellutil.sh
 # set -o xtrace
 
-apk_git=git~=2.24
-apk_git_gitk=git-gitk~=2.24
+apk_git=git~=2.32
+apk_git_gitk=git-gitk~=2.32
 apk_gnupg=gnupg~=2.2
-apk_openssh=openssh~=8.1
-apk_terminus_font=terminus-font~=4.48
-node_image=creemama/node-no-yarn:14.18.1-alpine3.11
+apk_openssh=openssh~=8.6
+apk_terminus_font=terminus-font~=4.49
+node_image=creemama/node-no-yarn:16.13.0-alpine3.14
 
 main() {
 	# shellcheck disable=SC2039

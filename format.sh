@@ -12,7 +12,7 @@ script_dir="$(
 
 apk_shellcheck=shellcheck~=0.7
 apk_shfmt=shfmt@edgecommunity~=3.4
-node_image=creemama/node-no-yarn:14.18.1-alpine3.11
+node_image=creemama/node-no-yarn:16.13.0-alpine3.14
 npm_prettier=prettier@2.4.1
 
 apk_guarantee_edgecommunity() {
