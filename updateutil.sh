@@ -17,7 +17,7 @@ apk_update_node_image_version() {
 
 	# shellcheck disable=SC2039
 	local sed_pattern
-	sed_pattern="${2:-s#(^node_image=creemama/node-no-yarn:).*#\\\\1%s-alpine%s#}"
+	sed_pattern="${2:-s#(^node_image=creemama/node-(no-yarn|dev):).*#\\\\1%s-alpine%s#}"
 
 	# shellcheck disable=SC2039
 	local major_node_version

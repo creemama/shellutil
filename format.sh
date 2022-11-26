@@ -10,16 +10,7 @@ script_dir="$(
 . "$script_dir"/shellutil.sh
 # set -o xtrace
 
-apk_shellcheck=shellcheck~=0.7
-apk_shfmt=shfmt@edgecommunity~=3.4
-node_image=creemama/node-no-yarn:16.13.0-alpine3.14
-npm_prettier=prettier@2.4.1
-
-apk_guarantee_edgecommunity() {
-	if [ -f /etc/apk/repositories ] && ! grep '@edgecommunity http://nl.alpinelinux.org/alpine/edge/community' /etc/apk/repositories >/dev/null 2>&1; then
-		printf %s '@edgecommunity http://nl.alpinelinux.org/alpine/edge/community' >>/etc/apk/repositories
-	fi
-}
+node_image=creemama/node-dev:16.13.0-alpine3.14
 
 format() {
 	run_shfmt "$@"
@@ -87,9 +78,6 @@ run_prettier() {
 	if [ -f node_modules/.bin/prettier ]; then
 		./node_modules/.bin/prettier --write "${@:-.}"
 	else
-		if ! test_command_exists prettier; then
-			npm install --global "$npm_prettier"
-		fi
 		prettier --write "${@:-.}"
 	fi
 }
@@ -116,9 +104,6 @@ run_shellcheck() {
 	else
 		files='./*.sh'
 	fi
-	if ! test_command_exists shellcheck; then
-		apk add "$apk_shellcheck"
-	fi
 	# shellcheck disable=SC2086
 	shellcheck --external-sources $files
 }
@@ -144,10 +129,6 @@ run_shfmt() {
 		fi
 	else
 		files='./*.sh'
-	fi
-	if ! test_command_exists shfmt; then
-		apk_guarantee_edgecommunity
-		apk add "$apk_shfmt"
 	fi
 	# shellcheck disable=SC2086
 	shfmt -w $files

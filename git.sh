@@ -10,12 +10,7 @@ script_dir="$(
 . "$script_dir"/shellutil.sh
 # set -o xtrace
 
-apk_git=git~=2.32
-apk_git_gitk=git-gitk~=2.32
-apk_gnupg=gnupg~=2.2
-apk_openssh=openssh~=8.6
-apk_terminus_font=terminus-font~=4.49
-node_image=creemama/node-no-yarn:16.13.0-alpine3.14
+node_image=creemama/node-dev:16.13.0-alpine3.14
 
 main() {
 	# shellcheck disable=SC2039
@@ -23,8 +18,7 @@ main() {
 	command_help='docker - Develop inside a Docker container.
 docker-git - Run git using a Docker container.
 docker-gitk - Run gitk using a Docker container.
-git - Run git.
-gitk - Run gitk.'
+git - Run git.'
 	# shellcheck disable=SC2039
 	local commands
 	commands="$(main_extract_commands "$command_help")"
@@ -39,9 +33,6 @@ gitk - Run gitk.'
 	elif [ "$1" = "$(arg 3 $commands)" ]; then
 		shift
 		run_git "$@"
-	elif [ "$1" = "$(arg 4 $commands)" ]; then
-		shift
-		run_gitk "$@"
 	else
 		main_exit_with_invalid_command_error "$1" "$command_help"
 	fi
@@ -77,21 +68,11 @@ run_docker_command() {
 }
 
 run_git() {
-	if ! test_command_exists git; then
-		apk add "$apk_git" "$apk_gnupg" "$apk_openssh"
-	fi
 	if [ -z "${GPG_TTY:-}" ]; then
 		export GPG_TTY
 		GPG_TTY="$(tty)"
 	fi
 	git "$@"
-}
-
-run_gitk() {
-	if ! test_command_exists gitk; then
-		apk add "$apk_git_gitk" "$apk_terminus_font"
-	fi
-	gitk "$@"
 }
 
 main "$@"
