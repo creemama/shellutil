@@ -48,11 +48,6 @@ run_tput() {
 	if ! is_tty; then
 		return 0
 	fi
-	if ! test_command_exists tput && test_command_exists apk; then
-		# ncurses has tput in Alpine Linux. Let's not care about the version of
-		# ncurses.
-		apk add ncurses >/dev/null 2>&1 || true
-	fi
 	if test_command_exists tput; then
 		tput "$@"
 	fi
