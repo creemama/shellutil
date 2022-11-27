@@ -48,11 +48,11 @@ update - Check and update project dependencies.'
 }
 
 run_docker_update() {
-	docker pull creemama/node-dev:lts-alpine
+	docker pull creemama/shellutil-dev:lts-alpine
 	docker run -it --rm \
 		--volume "$(pwd)":/tmp \
 		--workdir /tmp \
-		creemama/node-dev:lts-alpine \
+		creemama/shellutil-dev:lts-alpine \
 		sh -c './dev.sh update'
 }
 

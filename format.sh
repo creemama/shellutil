@@ -10,7 +10,7 @@ script_dir="$(
 . "$script_dir"/shellutil.sh
 # set -o xtrace
 
-node_image=creemama/node-dev:16.13.0-alpine3.14
+node_image=creemama/shellutil-dev:18.12.1-alpine3.16
 
 format() {
 	run_shfmt "$@"
