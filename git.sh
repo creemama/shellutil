@@ -13,13 +13,11 @@ script_dir="$(
 node_image=creemama/shellutil-dev:18.12.1-alpine3.16
 
 main() {
-	# shellcheck disable=SC2039
 	local command_help
 	command_help='docker - Develop inside a Docker container.
 docker-git - Run git using a Docker container.
 docker-gitk - Run gitk using a Docker container.
 git - Run git.'
-	# shellcheck disable=SC2039
 	local commands
 	commands="$(main_extract_commands "$command_help")"
 	# shellcheck disable=SC2086
@@ -60,7 +58,6 @@ run_docker() {
 }
 
 run_docker_command() {
-	# shellcheck disable=SC2039
 	local command
 	command="$(printf %s "${1:-}" | sed -E 's/^docker-//')"
 	shift

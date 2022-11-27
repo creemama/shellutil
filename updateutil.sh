@@ -11,19 +11,15 @@ apk_guarantee_edgecommunity() {
 }
 
 apk_update_node_image_version() {
-	# shellcheck disable=SC2039
 	local file
 	file="${1:-dev.sh}"
 
-	# shellcheck disable=SC2039
 	local sed_pattern
 	sed_pattern="${2:-s#(creemama/(node-no-yarn|shellutil-dev):).*#\\\\1%s-alpine%s#}"
 
-	# shellcheck disable=SC2039
 	local major_node_version
 	major_node_version="$(get_major_node_version)"
 
-	# shellcheck disable=SC2039
 	local alpine_version
 	alpine_version="$(apk_get_alpine_version)"
 
@@ -34,20 +30,16 @@ apk_update_node_image_version() {
 }
 
 apk_update_package_version() {
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 
-	# shellcheck disable=SC2039
 	local file
 	file="${2:-dev.sh}"
 
-	# shellcheck disable=SC2039
 	local package_version
 	# "s/$package-([0-9]+)[a-z]?-.*/\1/" matches the following:
 	# less-530-r0
 	# tzdata-2019a-r0
-	# shellcheck disable=SC2039
 	local packages
 	packages="$(apk --no-cache --update search "$package")"
 	package_version="$(
@@ -79,15 +71,12 @@ get_major_node_version() {
 }
 
 npm_update_package_version() {
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 
-	# shellcheck disable=SC2039
 	local file
 	file="${2:-dev.sh}"
 
-	# shellcheck disable=SC2039
 	local package_version
 	package_version="$(npm show "$package" version)"
 
@@ -111,15 +100,12 @@ pip_update_package_version() {
 		exit 1
 	fi
 
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 
-	# shellcheck disable=SC2039
 	local file
 	file="${2:-dev.sh}"
 
-	# shellcheck disable=SC2039
 	local package_version
 	# https://www.python.org/dev/peps/pep-0440/
 	package_version="$(pip3 install "$package"==random 2>&1 |

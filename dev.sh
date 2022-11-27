@@ -14,7 +14,6 @@ cd "$script_dir"
 # set -o xtrace
 
 main() {
-	# shellcheck disable=SC2039
 	local command_help
 	command_help='docker - Develop inside a Docker container.
 docker-format - Run format using a Docker container.
@@ -22,7 +21,6 @@ docker-update - Run update using a Docker container.
 format - Run shfmt, prettier, and shellcheck.
 git - Run git.
 update - Check and update project dependencies.'
-	# shellcheck disable=SC2039
 	local commands
 	commands="$(main_extract_commands "$command_help")"
 	# shellcheck disable=SC2086

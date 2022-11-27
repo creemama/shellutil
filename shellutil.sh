@@ -3,7 +3,7 @@
 IFS=$(printf '\n\t')
 set -o errexit -o nounset
 if [ -n "${BASH_VERSION:-}" ]; then
-	# shellcheck disable=SC2039
+	# shellcheck disable=SC3040
 	set -o pipefail
 fi
 # set -o xtrace
@@ -28,10 +28,8 @@ is_tty() {
 }
 
 print_arg_n() {
-	# shellcheck disable=SC2039
 	local n
 	n="$1"
-	# shellcheck disable=SC2039
 	local i
 	i=0
 	shift

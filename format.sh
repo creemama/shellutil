@@ -19,7 +19,6 @@ format() {
 }
 
 main() {
-	# shellcheck disable=SC2039
 	local command_help
 	command_help='docker - Develop inside a Docker container.
 format - (or docker-format) Run shfmt, prettier, and shellcheck.
@@ -27,7 +26,6 @@ prettier - (or docker-prettier) Run prettier.
 shell-format - (or docker-shell-format) Run shfmt and shellcheck.
 shfmt - (or docker-shellcheck) Run shfmt.
 shellcheck - (or docker-shellcheck) Run shellcheck.'
-	# shellcheck disable=SC2039
 	local commands
 	commands="$(main_extract_commands "$command_help")"
 	# shellcheck disable=SC2086
@@ -67,7 +65,6 @@ run_docker() {
 }
 
 run_docker_command() {
-	# shellcheck disable=SC2039
 	local command
 	command="$(printf %s "${1:-}" | sed -E 's/^docker-//')"
 	shift
@@ -89,7 +86,6 @@ run_shellcheck() {
 		done
 		return
 	fi
-	# shellcheck disable=SC2039
 	local files
 	if [ -n "${1:-}" ]; then
 		if [ -d "$1" ]; then
@@ -105,7 +101,7 @@ run_shellcheck() {
 		files='./*.sh'
 	fi
 	# shellcheck disable=SC2086
-	shellcheck --external-sources $files
+	shellcheck -e SC3043 --external-sources $files
 }
 
 run_shfmt() {
@@ -115,7 +111,6 @@ run_shfmt() {
 		done
 		return
 	fi
-	# shellcheck disable=SC2039
 	local files
 	if [ -n "${1:-}" ]; then
 		if [ -d "$1" ]; then
