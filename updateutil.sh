@@ -37,17 +37,17 @@ apk_update_package_version() {
 	file="${2:-dev.sh}"
 
 	local package_version
-	# "s/$package-([0-9]+)[a-z]?-.*/\1/" matches the following:
+	# "s/$package-([0-9]+[a-z]?)-.*/\1/" matches the following:
 	# less-530-r0
 	# tzdata-2019a-r0
 	local packages
-	packages="$(apk --no-cache --update search "$package")"
+	packages="$(apk --no-cache --update search "$package" | sort)"
 	package_version="$(
 		printf %s "$packages" |
 			grep -E "^$package-[0-9]" |
 			head -n 1 |
 			sed -E "s/$package-([0-9]+\.[0-9]+).*/\1/" |
-			sed -E "s/$package-([0-9]+)[a-z]?-.*/\1/"
+			sed -E "s/$package-([0-9]+[a-z]?)-.*/\1/"
 	)"
 
 	printf '\n%s%sChecking %s...%s\n%s\n%s%s...%s%s\n' \
@@ -62,7 +62,7 @@ apk_update_package_version() {
 		"$(treset)"
 
 	sed -E -i'' \
-		"s/$package(@edgecommunity)?~=[0-9.]+/$package\\1~=$package_version/" \
+		"s/$package~=[0-9a-z.-]+/$package\\1~=$package_version/" \
 		"$file"
 }
 
