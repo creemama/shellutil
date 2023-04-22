@@ -10,7 +10,7 @@ script_dir="$(
 . "$script_dir"/shellutil.sh
 # set -o xtrace
 
-node_image=creemama/shellutil-dev:18.12.1-alpine3.16
+node_image=creemama/shellutil-dev:18.13.0-alpine3.17
 
 main() {
 	local command_help
