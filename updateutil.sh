@@ -15,7 +15,7 @@ apk_update_node_image_version() {
 	file="${1:-dev.sh}"
 
 	local sed_pattern
-	sed_pattern="${2:-s#(creemama/(node-no-yarn|shellutil-dev):).*#\\\\1%s-alpine%s#}"
+	sed_pattern="${2:-s#((node|creemama/shellutil-dev):).*#\\\\1%s-alpine%s#}"
 
 	local major_node_version
 	major_node_version="$(get_major_node_version)"
