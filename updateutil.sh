@@ -108,12 +108,9 @@ pip_update_package_version() {
 
 	local package_version
 	# https://www.python.org/dev/peps/pep-0440/
-	package_version="$(pip3 install "$package"==random 2>&1 |
-		grep -E "\(from versions: " |
-		sed -E 's/.*\(from versions: (.*)\)/\1/' |
-		sed -E 's/\S+(a|b|rc|post|dev)\S+//g' |
-		tr -d , |
-		sed -E 's/.+\s(\S+)\s*/\1/')"
+	# The awk command extracts the version number from the first line of pip3's
+	# output (e.g., "schedule (1.2.2)").
+	package_version="$(pip3 index versions "$package" | awk 'NR==1 {gsub(/[()]/, "", $2); print $2}')"
 
 	printf '\n%s%sChecking %s %s...%s\n' \
 		"$(tbold)" \
