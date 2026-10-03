@@ -33,21 +33,24 @@ apk_update_package_version() {
 	local package
 	package="$1"
 
+	local escaped_package
+	escaped_package=$(escape_regex "$package")
+
 	local file
 	file="${2:-dev.sh}"
 
 	local package_version
-	# "s/$package-([0-9]+[a-z]?)-.*/\1/" matches the following:
+	# "s/$escaped_package-([0-9]+[a-z]?)-.*/\1/" matches the following:
 	# less-530-r0
 	# tzdata-2019a-r0
 	local packages
 	packages="$(apk --no-cache --update search "$package" | sort)"
 	package_version="$(
 		printf %s "$packages" |
-			grep -E "^$package-[0-9]" |
+			grep -E "^$escaped_package-[0-9]" |
 			head -n 1 |
-			sed -E "s/$package-([0-9]+\.[0-9]+).*/\1/" |
-			sed -E "s/$package-([0-9]+[a-z]?)-.*/\1/"
+			sed -E "s/$escaped_package-([0-9]+\.[0-9]+).*/\1/" |
+			sed -E "s/$escaped_package-([0-9]+[a-z]?)-.*/\1/"
 	)"
 
 	printf '\n%s%sChecking %s...%s\n%s\n%s%s...%s%s\n' \
@@ -62,8 +65,14 @@ apk_update_package_version() {
 		"$(treset)"
 
 	sed -E -i'' \
-		"s/$package~=[0-9a-z.-]+/$package\\1~=$package_version/" \
+		"s/$escaped_package~=[0-9a-z.-]+/$package\\1~=$package_version/" \
 		"$file"
+}
+
+escape_regex() {
+	# Escape standard ERE/BRE special characters: . \ ^ $ * + ? ( ) [ ] { } |
+	# We handle ] specially since it breaks the middle expression.
+	printf '%s' "$1" | sed 's/[\\.^$*+?()|[{}]/\\&/g' | sed 's/\]/\\&/g'
 }
 
 get_major_node_version() {
